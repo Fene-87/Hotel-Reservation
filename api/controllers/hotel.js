@@ -38,11 +38,9 @@ export const getHotel = async (req, res, next) => {
     }
 }
 
-export const getHotels = async (req, res, next) => {
-    const failed = true;
-    
+export const getHotels = async (req, res, next) => { 
     try {
-        const hotels = await Hotel.find();
+        const hotels = await Hotel.find(req.query);
         res.status(200).json(hotels);
     } catch (err) {
         next(err);
@@ -57,6 +55,26 @@ export const countByCity = async (req, res, next) => {
             return Hotel.countDocuments({city:city});
         }))
         res.status(200).json(list);
+    } catch (err) {
+        next(err);
+    }
+}
+
+export const countByType = async (req, res, next) => { 
+    try {
+        const hotelCount = await Hotel.countDocuments({type:"Hotel"});
+        const apartmentCount = await Hotel.countDocuments({type:"apartment"});
+        const resortCount = await Hotel.countDocuments({type:"resort"});
+        const villaCount = await Hotel.countDocuments({type:"villa"});
+        const cabinCount = await Hotel.countDocuments({type:"cabin"});
+
+        res.status(200).json([
+            {type:"Hotels", count:hotelCount},
+            {type:"Apartments", count:apartmentCount},
+            {type:"Resorts", count:resortCount},
+            {type:"Villas", count:villaCount},
+            {type:"Cabins", count:cabinCount}
+        ]);
     } catch (err) {
         next(err);
     }
